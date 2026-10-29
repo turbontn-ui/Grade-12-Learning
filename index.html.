@@ -1,1 +1,352 @@
+import os, zipfile, textwrap
+
+base = "/mnt/data/grade12_learning_website"
+os.makedirs(base, exist_ok=True)
+
+html = r'''<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Free Grade 12 CAPS revision resources for South African Life Sciences and Agricultural Sciences learners.">
+<title>Grade 12 Learning Hub | Free CAPS Revision</title>
+<style>
+:root{--navy:#102a43;--blue:#1769aa;--teal:#087f8c;--gold:#f4b942;--ink:#1e293b;--muted:#64748b;--paper:#f4f7fb;--white:#fff;--line:#e2e8f0;--green:#147d52;--red:#b42318;--shadow:0 10px 30px rgba(16,42,67,.08)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--paper);color:var(--ink);line-height:1.6}a{color:var(--blue)}button,input,select{font:inherit}button{cursor:pointer}.skip{position:absolute;left:-9999px}.skip:focus{left:1rem;top:1rem;background:white;padding:.6rem;z-index:20}
+.topbar{background:var(--navy);color:#eaf2f8;padding:.55rem 5%;font-size:.86rem;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}.brandbar{background:#fff;border-bottom:1px solid var(--line);padding:1rem 5%;display:flex;align-items:center;justify-content:space-between;gap:1rem;position:sticky;top:0;z-index:10}.brand{display:flex;align-items:center;gap:.75rem;text-decoration:none;color:var(--navy);font-weight:800;font-size:1.08rem}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--teal));display:grid;place-items:center;color:#fff;font-weight:900;letter-spacing:-1px}.nav{display:flex;gap:.3rem;flex-wrap:wrap}.nav a{padding:.55rem .75rem;border-radius:9px;text-decoration:none;color:#334155;font-weight:650;font-size:.92rem}.nav a:hover,.nav a.active{background:#eaf4fc;color:var(--blue)}.menu-button{display:none;border:1px solid var(--line);background:#fff;border-radius:9px;padding:.55rem .8rem}
+main{max-width:1180px;margin:auto;padding:1.5rem 1.2rem 3rem}.hero{background:linear-gradient(120deg,#10345b,#1769aa 62%,#087f8c);border-radius:24px;color:#fff;padding:clamp(1.5rem,4vw,3.5rem);position:relative;overflow:hidden;box-shadow:var(--shadow)}.hero:after{content:"";position:absolute;width:300px;height:300px;border:45px solid rgba(255,255,255,.08);border-radius:50%;right:-80px;top:-95px}.eyebrow{text-transform:uppercase;letter-spacing:.13em;font-weight:800;font-size:.76rem;color:#bfe8f4}.hero h1{font-size:clamp(2rem,5vw,3.55rem);line-height:1.1;max-width:760px;margin:.65rem 0 1rem;letter-spacing:-.04em}.hero p{max-width:690px;color:#e5f3ff;font-size:1.06rem}.actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.4rem}.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.72rem 1rem;border:0;border-radius:10px;font-weight:750;text-decoration:none}.btn-primary{background:var(--gold);color:#172b4d}.btn-light{background:#fff;color:var(--navy)}.btn-outline{border:1px solid #b8d4e8;background:#fff;color:var(--navy)}.btn-small{padding:.45rem .7rem;font-size:.88rem}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:1.2rem 0 2.1rem}.stat,.card,.panel{background:#fff;border:1px solid var(--line);border-radius:17px;padding:1.15rem;box-shadow:0 4px 18px rgba(16,42,67,.035)}.stat strong{display:block;font-size:1.65rem;color:var(--navy);line-height:1.2}.stat span{font-size:.87rem;color:var(--muted)}.section{margin-top:2.4rem;scroll-margin-top:100px}.section-head{display:flex;align-items:end;justify-content:space-between;gap:1rem;margin-bottom:1rem}.section-head h2{font-size:clamp(1.45rem,3vw,2rem);letter-spacing:-.03em;margin:0;color:var(--navy)}.section-head p{margin:.3rem 0 0;color:var(--muted)}.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}.subject-card{padding:0;overflow:hidden}.subject-band{padding:1.25rem;color:#fff}.subject-band.life{background:linear-gradient(120deg,#1769aa,#39a0ca)}.subject-band.agri{background:linear-gradient(120deg,#176b4d,#50a77c)}.subject-band .emoji{font-size:1.8rem}.subject-band h3{margin:.35rem 0 0;font-size:1.35rem}.subject-content{padding:1.2rem}.pill{display:inline-block;background:#eaf4fc;color:#145b8f;border-radius:99px;padding:.2rem .55rem;font-size:.78rem;font-weight:750;margin:.15rem .15rem .15rem 0}.pill.green{background:#e7f7ef;color:#176b4d}.topic-list{padding-left:1.15rem;margin:.5rem 0 1rem}.topic-list li{margin:.25rem 0}.muted{color:var(--muted)}.two-col{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);gap:1rem}.note-card h3,.card h3{margin:.15rem 0 .5rem;color:var(--navy)}.note-card p{margin:.5rem 0}.diagram{background:#f0f7ff;border:1px solid #cfe5f7;border-radius:14px;padding:1rem;margin:1rem 0;text-align:center}.diagram-row{display:flex;align-items:center;justify-content:center;gap:.45rem;flex-wrap:wrap}.diagram-node{border:2px solid #7ab6df;background:#fff;padding:.6rem .8rem;border-radius:10px;font-weight:750}.arrow{font-size:1.4rem;color:var(--blue);font-weight:900}.diagram-caption{font-size:.85rem;color:var(--muted);margin:.7rem 0 0}.notice{background:#fff8e7;border:1px solid #f4d48a;border-radius:12px;padding:.9rem 1rem;color:#6f4c00}.quiz-layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:1rem}.quiz-box{background:#fff;border:1px solid var(--line);border-radius:17px;padding:1.3rem}.quiz-controls{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1rem}.field{display:grid;gap:.3rem;margin:.5rem 0}.field label{font-weight:700;font-size:.9rem}.field select,.field input{width:100%;border:1px solid #cbd5e1;border-radius:9px;padding:.65rem;background:#fff;color:var(--ink)}.question{padding:1rem 0;border-bottom:1px solid var(--line)}.question:last-child{border-bottom:0}.question legend{font-weight:750;margin-bottom:.6rem}.option{display:flex;align-items:flex-start;gap:.55rem;padding:.45rem .6rem;border-radius:9px;margin:.2rem 0;cursor:pointer}.option:hover{background:#f3f8fc}.option input{margin-top:.35rem}.feedback{margin-top:.5rem;font-size:.9rem}.correct{color:var(--green);font-weight:750}.incorrect{color:var(--red);font-weight:750}.result{background:#edf8f3;border:1px solid #b9e5ce;border-radius:12px;padding:1rem;margin:1rem 0}.result strong{font-size:1.5rem}.paper-links{display:grid;gap:.75rem}.paper-link{display:flex;align-items:center;justify-content:space-between;gap:1rem;background:#fff;border:1px solid var(--line);border-radius:12px;padding:1rem;text-decoration:none;color:var(--ink)}.paper-link:hover{border-color:#8bbce0;background:#f8fcff}.paper-link strong{display:block;color:var(--navy)}.paper-link small{color:var(--muted)}.dashboard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}.progress-track{height:9px;background:#e8eef5;border-radius:99px;overflow:hidden;margin:.6rem 0}.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:99px}.history{width:100%;border-collapse:collapse;font-size:.9rem}.history th,.history td{text-align:left;padding:.7rem .5rem;border-bottom:1px solid var(--line)}.history th{color:var(--muted);font-size:.8rem}.empty{padding:1.2rem;border:1px dashed #cbd5e1;border-radius:12px;text-align:center;color:var(--muted)}.footer{background:var(--navy);color:#dce8f3;padding:2rem 5%;text-align:center}.footer a{color:#fff}.footer p{margin:.35rem 0}.small{font-size:.84rem}.hide{display:none!important}
+@media(max-width:820px){.nav{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border-bottom:1px solid var(--line);padding:.8rem 5%;box-shadow:var(--shadow)}.nav.open{display:grid;grid-template-columns:repeat(2,1fr)}.menu-button{display:block}.stats{grid-template-columns:repeat(2,1fr)}.grid-3{grid-template-columns:repeat(2,minmax(0,1fr))}.two-col,.quiz-layout{grid-template-columns:1fr}.dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:540px){.topbar{padding:.55rem 4%}.brandbar{padding:.8rem 4%}.brand{font-size:.98rem}.logo{width:38px;height:38px}main{padding:1rem .8rem 2.5rem}.hero{border-radius:17px}.grid-2,.grid-3,.dashboard-grid{grid-template-columns:1fr}.stats{gap:.6rem}.stat{padding:.9rem}.stat strong{font-size:1.4rem}.section-head{align-items:start;flex-direction:column}.history{font-size:.8rem}.history th,.history td{padding:.55rem .25rem}.paper-link{align-items:start}.paper-link .btn{white-space:nowrap}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="topbar"><span>🇿🇦 Free Grade 12 revision resources</span><span>CAPS-focused • Learn at your own pace</span></div>
+<header class="brandbar">
+  <a class="brand" href="#home" aria-label="Grade 12 Learning Hub home"><span class="logo">12+</span><span>Grade 12 <span style="color:var(--teal)">Learning Hub</span></span></a>
+  <button class="menu-button" id="menuButton" aria-expanded="false" aria-controls="mainNav">☰ Menu</button>
+  <nav class="nav" id="mainNav" aria-label="Main navigation">
+    <a href="#home">Home</a><a href="#subjects">Subjects</a><a href="#notes">Study notes</a><a href="#quiz">Quizzes</a><a href="#papers">Past papers</a><a href="#dashboard">Dashboard</a>
+  </nav>
+</header>
+<main id="main">
+  <section class="hero" id="home">
+    <div class="eyebrow">Your free study partner</div>
+    <h1>Learn smarter.<br>Prepare with confidence.</h1>
+    <p>Study Life Sciences and Agricultural Sciences, practise exam-style questions, and track your revision progress — all in one place.</p>
+    <div class="actions"><a class="btn btn-primary" href="#subjects">Explore subjects →</a><a class="btn btn-light" href="#quiz">Try a quick quiz</a></div>
+  </section>
+
+  <section class="stats" aria-label="Learning overview">
+    <div class="stat"><strong id="statQuizzes">0</strong><span>Quiz attempts saved</span></div>
+    <div class="stat"><strong id="statAverage">—</strong><span>Average quiz score</span></div>
+    <div class="stat"><strong id="statBest">—</strong><span>Best score</span></div>
+    <div class="stat"><strong>2</strong><span>Core subjects</span></div>
+  </section>
+
+  <section class="section" id="subjects">
+    <div class="section-head"><div><h2>Choose a subject</h2><p>Start with a topic, then test what you remember.</p></div></div>
+    <div class="grid-2">
+      <article class="card subject-card">
+        <div class="subject-band life"><div class="emoji">🧬</div><h3>Life Sciences</h3><span>Biology • Human systems • Genetics</span></div>
+        <div class="subject-content"><span class="pill">CAPS revision</span><span class="pill">Study notes</span><ul class="topic-list"><li>DNA, RNA and protein synthesis</li><li>Meiosis and inheritance</li><li>Human reproduction</li><li>Evolution and human evolution</li></ul><a class="btn btn-outline" href="#notes" onclick="selectNote('life')">Open Life Sciences notes</a></div>
+      </article>
+      <article class="card subject-card">
+        <div class="subject-band agri"><div class="emoji">🌱</div><h3>Agricultural Sciences</h3><span>Soil • Crops • Livestock • Farm management</span></div>
+        <div class="subject-content"><span class="pill green">CAPS revision</span><span class="pill green">Study notes</span><ul class="topic-list"><li>Soil properties and fertility</li><li>Plant and crop production</li><li>Animal nutrition and production</li><li>Agricultural economics and management</li></ul><a class="btn btn-outline" href="#notes" onclick="selectNote('agri')">Open Agricultural Sciences notes</a></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" id="notes">
+    <div class="section-head"><div><h2>Study notes & diagrams</h2><p>Short revision summaries to help you get started. Expand your notes as you learn.</p></div></div>
+    <div class="field" style="max-width:360px"><label for="noteSubject">Select subject</label><select id="noteSubject"><option value="life">Life Sciences</option><option value="agri">Agricultural Sciences</option></select></div>
+    <div id="lifeNotes" class="notes-set">
+      <div class="two-col">
+        <article class="card note-card">
+          <span class="pill">Life Sciences</span><h3>DNA, genes and chromosomes</h3>
+          <p><strong>DNA</strong> (deoxyribonucleic acid) stores hereditary information. A gene is a section of DNA associated with a functional product or trait. DNA is packaged into chromosomes.</p>
+          <p><strong>Base pairing:</strong> adenine (A) pairs with thymine (T), while cytosine (C) pairs with guanine (G) in DNA.</p>
+          <p><strong>Remember:</strong> DNA replication produces copies of DNA before cell division. Protein synthesis involves transcription and translation.</p>
+          <div class="diagram" role="img" aria-label="Simplified relationship from DNA to gene to chromosome">
+            <div class="diagram-row"><div class="diagram-node">DNA</div><span class="arrow">→</span><div class="diagram-node">Gene</div><span class="arrow">→</span><div class="diagram-node">Protein / trait</div></div>
+            <p class="diagram-caption">Simplified concept map: genes are sections of DNA; proteins can influence traits.</p>
+          </div>
+        </article>
+        <article class="card note-card">
+          <h3>Meiosis: key ideas</h3>
+          <p>Meiosis is a type of cell division that reduces the chromosome number by half and produces haploid cells. In humans, it contributes to the formation of gametes.</p>
+          <ul class="topic-list"><li>DNA replicates before meiosis begins.</li><li>Homologous chromosomes separate in meiosis I.</li><li>Sister chromatids separate in meiosis II.</li><li>Crossing over and independent assortment contribute to variation.</li></ul>
+          <div class="diagram" role="img" aria-label="Simplified meiosis flow diagram">
+            <div class="diagram-row"><div class="diagram-node">Diploid cell</div><span class="arrow">↓</span><div class="diagram-node">Meiosis I</div><span class="arrow">↓</span><div class="diagram-node">Meiosis II</div><span class="arrow">↓</span><div class="diagram-node">Haploid cells</div></div>
+            <p class="diagram-caption">Simplified flow only; learn the stages and chromosome movements in detail.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+    <div id="agriNotes" class="notes-set hide">
+      <div class="two-col">
+        <article class="card note-card">
+          <span class="pill green">Agricultural Sciences</span><h3>Soil texture and structure</h3>
+          <p><strong>Soil texture</strong> describes the relative proportions of sand, silt and clay. <strong>Soil structure</strong> describes how soil particles group into aggregates.</p>
+          <ul class="topic-list"><li>Sandy soils generally drain quickly and hold fewer nutrients.</li><li>Clay soils have small particles and can hold more water, but may drain slowly.</li><li>Loam often has a balanced mixture of particle sizes.</li><li>Organic matter can improve soil structure and water retention.</li></ul>
+          <div class="diagram" role="img" aria-label="Soil particle sizes from sand to clay">
+            <div class="diagram-row"><div class="diagram-node">Sand<br><small>Largest</small></div><span class="arrow">→</span><div class="diagram-node">Silt<br><small>Medium</small></div><span class="arrow">→</span><div class="diagram-node">Clay<br><small>Smallest</small></div></div>
+            <p class="diagram-caption">Relative particle size, not a soil-texture classification chart.</p>
+          </div>
+        </article>
+        <article class="card note-card">
+          <h3>Plant production essentials</h3>
+          <p>Successful crop production depends on matching the crop and cultivar to the environment and managing water, nutrients, weeds, pests and diseases.</p>
+          <ul class="topic-list"><li>Use healthy, suitable seed and follow recommended planting dates.</li><li>Prepare the seedbed according to soil and crop needs.</li><li>Apply fertiliser based on soil tests and crop requirements.</li><li>Monitor crops and use integrated pest management principles.</li><li>Harvest at the appropriate maturity stage.</li></ul>
+          <div class="notice small">These are introductory summaries. Confirm exact terminology, examples and examinable scope against your current CAPS subject documents and teacher's guidance.</div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="quiz">
+    <div class="section-head"><div><h2>Practice quizzes</h2><p>Answer the questions and get instant feedback. Each completed attempt is saved in this browser.</p></div></div>
+    <div class="quiz-layout">
+      <div class="quiz-box">
+        <div class="quiz-controls">
+          <div class="field" style="flex:1;min-width:190px;margin:0"><label for="quizSubject">Subject</label><select id="quizSubject"><option value="life">Life Sciences</option><option value="agri">Agricultural Sciences</option></select></div>
+          <div class="field" style="flex:1;min-width:190px;margin:0"><label for="quizLength">Quiz length</label><select id="quizLength"><option value="5">5 questions</option><option value="3">3 questions</option></select></div>
+        </div>
+        <form id="quizForm"><div id="questions"></div><button type="submit" class="btn btn-primary">Mark my answers</button></form>
+        <div id="quizResult" aria-live="polite"></div>
+      </div>
+      <aside class="card">
+        <h3>Quiz tips</h3><ul class="topic-list"><li>Read each question carefully.</li><li>Answer every question before marking.</li><li>Read the feedback after your attempt.</li><li>Repeat the quiz to improve your score.</li></ul>
+        <div class="notice small">Practice questions are for revision and are not official examination questions.</div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section" id="papers">
+    <div class="section-head"><div><h2>Past papers & official resources</h2><p>Use official sources to find papers, memos and curriculum documents.</p></div></div>
+    <div class="paper-links">
+      <a class="paper-link" href="https://www.education.gov.za/Curriculum/NationalSeniorCertificate(NSC)Examinations.aspx" target="_blank" rel="noopener"><span><strong>DBE National Senior Certificate examinations</strong><small>Department of Basic Education • exam resources and announcements</small></span><span class="btn btn-outline btn-small">Open ↗</span></a>
+      <a class="paper-link" href="https://www.education.gov.za/Curriculum/CurriculumAssessmentPolicyStatements(CAPS).aspx" target="_blank" rel="noopener"><span><strong>CAPS curriculum documents</strong><small>Department of Basic Education • curriculum and assessment guidance</small></span><span class="btn btn-outline btn-small">Open ↗</span></a>
+      <a class="paper-link" href="https://www.education.gov.za/" target="_blank" rel="noopener"><span><strong>Department of Basic Education</strong><small>Official education updates and learning resources</small></span><span class="btn btn-outline btn-small">Open ↗</span></a>
+    </div>
+    <p class="muted small">External links may change. If a page has moved, use the DBE website search for “National Senior Certificate past examination papers” or the relevant subject. Only download and share materials you are permitted to use.</p>
+  </section>
+
+  <section class="section" id="dashboard">
+    <div class="section-head"><div><h2>Your learner dashboard</h2><p>Your progress is saved only in this browser on this device.</p></div><button class="btn btn-outline btn-small" id="exportBtn">Export progress</button></div>
+    <div class="dashboard-grid">
+      <div class="card"><span class="muted small">Quiz attempts</span><h2 id="dashAttempts">0</h2><p class="muted small">All saved attempts</p></div>
+      <div class="card"><span class="muted small">Average score</span><h2 id="dashAverage">—</h2><div class="progress-track"><div class="progress-fill" id="averageProgress"></div></div></div>
+      <div class="card"><span class="muted small">Best score</span><h2 id="dashBest">—</h2><p class="muted small" id="bestSubject">Complete a quiz to begin.</p></div>
+    </div>
+    <div class="panel" style="margin-top:1rem">
+      <div class="section-head"><div><h3 style="margin:0">Recent quiz history</h3><p class="small">Latest attempts appear first.</p></div><button class="btn btn-outline btn-small" id="clearBtn">Clear history</button></div>
+      <div id="historyWrap"><div class="empty">No quiz attempts yet. Complete a quiz to see your progress here.</div></div>
+    </div>
+    <div class="notice small" style="margin-top:1rem"><strong>Privacy note:</strong> This starter site has no account or server. Anyone using this browser profile may be able to see the saved quiz history. Export your progress before clearing browser data. Do not use this local dashboard to store sensitive personal information.</div>
+  </section>
+</main>
+<footer class="footer">
+  <p><strong>Grade 12 Learning Hub</strong></p>
+  <p>Free study support for South African learners.</p>
+  <p class="small">Learning summaries are introductory and should be checked against current CAPS documents and teacher guidance.</p>
+  <p class="small">© <span id="year"></span> Grade 12 Learning Hub</p>
+</footer>
+<script>
+const STORAGE_KEY = "grade12LearningHubProgress_v1";
+const quizBank = {
+  life: [
+    {q:"Which molecule stores hereditary information in most living organisms?",o:["Glucose","DNA","Starch","Water"],a:1,e:"DNA stores hereditary information."},
+    {q:"Which DNA base pairs with adenine?",o:["Guanine","Cytosine","Thymine","Uracil"],a:2,e:"In DNA, adenine pairs with thymine."},
+    {q:"Which process reduces the chromosome number by half?",o:["Mitosis","Meiosis","Fertilisation","Transcription"],a:1,e:"Meiosis produces haploid cells from a diploid starting cell."},
+    {q:"Where does translation take place during protein synthesis?",o:["Ribosomes","Lysosomes","Cell wall","Golgi body only"],a:0,e:"Ribosomes read mRNA to assemble amino acids into a polypeptide."},
+    {q:"What is a gene?",o:["A whole organism","A section of DNA associated with a functional product or trait","A type of cell membrane","A mineral in soil"],a:1,e:"A gene is a section of DNA associated with a functional product or trait."},
+    {q:"Which process can increase genetic variation during meiosis?",o:["Crossing over","Binary fission","Photosynthesis","Diffusion"],a:0,e:"Crossing over exchanges segments between homologous chromosomes."},
+    {q:"Which term describes the observable characteristics of an organism?",o:["Genotype","Phenotype","Allele","Gamete"],a:1,e:"Phenotype refers to observable characteristics resulting from genetic and environmental influences."}
+  ],
+  agri: [
+    {q:"Which soil particle is generally the largest?",o:["Clay","Silt","Sand","Humus"],a:2,e:"Sand particles are generally larger than silt and clay particles."},
+    {q:"What does soil texture describe?",o:["Soil colour only","Proportions of sand, silt and clay","The age of a crop","The number of farm workers"],a:1,e:"Soil texture describes the relative proportions of sand, silt and clay."},
+    {q:"Which practice helps determine nutrient needs before fertilising?",o:["Guessing the rate","Soil testing","Harvesting early","Increasing plant spacing randomly"],a:1,e:"Soil testing helps inform fertiliser decisions alongside crop requirements and recommendations."},
+    {q:"What is a cultivar?",o:["A cultivated plant variety selected for particular characteristics","A soil insect","A type of irrigation pipe","A livestock disease"],a:0,e:"A cultivar is a cultivated plant variety selected for particular characteristics."},
+    {q:"Which is an example of integrated pest management?",o:["Using only one control method every time","Combining monitoring and suitable control methods","Ignoring pest populations","Applying any pesticide without guidance"],a:1,e:"Integrated pest management combines monitoring and appropriate compatible methods to manage pests."},
+    {q:"Which nutrient is commonly associated with leafy vegetative growth?",o:["Nitrogen","Sodium chloride only","Lead","Mercury"],a:0,e:"Nitrogen is important for proteins and chlorophyll and supports vegetative growth."},
+    {q:"What is the main purpose of a farm budget?",o:["To record only rainfall","To estimate and plan income and expenses","To identify plant species only","To measure soil texture"],a:1,e:"A farm budget helps plan and estimate costs, income and financial outcomes."}
+  ]
+};
+let currentQuestions = [];
+let lastResult = null;
+function loadProgress(){
+  try { const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); return Array.isArray(parsed) ? parsed : []; }
+  catch(e){ return []; }
+}
+function saveProgress(items){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); } catch(e){ alert("Your browser could not save progress. Check browser storage settings."); } }
+function selectNote(subject){
+  document.getElementById("noteSubject").value = subject;
+  updateNotes();
+}
+function updateNotes(){
+  const isLife = document.getElementById("noteSubject").value === "life";
+  document.getElementById("lifeNotes").classList.toggle("hide",!isLife);
+  document.getElementById("agriNotes").classList.toggle("hide",isLife);
+}
+function buildQuiz(){
+  const subject = document.getElementById("quizSubject").value;
+  const count = Number(document.getElementById("quizLength").value);
+  const bank = quizBank[subject];
+  currentQuestions = [...bank].sort(()=>Math.random()-.5).slice(0,count);
+  const container = document.getElementById("questions");
+  container.innerHTML = "";
+  currentQuestions.forEach((item,index)=>{
+    const fieldset = document.createElement("fieldset");
+    fieldset.className = "question";
+    const legend = document.createElement("legend");
+    legend.textContent = `${index+1}. ${item.q}`;
+    fieldset.appendChild(legend);
+    item.o.forEach((option,i)=>{
+      const label = document.createElement("label");
+      label.className = "option";
+      const input = document.createElement("input");
+      input.type = "radio"; input.name = `q${index}`; input.value = String(i); input.required = true;
+      const span = document.createElement("span"); span.textContent = option;
+      label.append(input,span); fieldset.appendChild(label);
+    });
+    container.appendChild(fieldset);
+  });
+  document.getElementById("quizResult").innerHTML = "";
+  lastResult = null;
+}
+function markQuiz(event){
+  event.preventDefault();
+  if(!currentQuestions.length) return;
+  let score=0;
+  const details=[];
+  currentQuestions.forEach((q,index)=>{
+    const chosen=document.querySelector(`input[name="q${index}"]:checked`);
+    if(!chosen){return;}
+    const correct=Number(chosen.value)===q.a;
+    if(correct) score++;
+    details.push({question:q.q,correct,explanation:q.e});
+  });
+  if(details.length!==currentQuestions.length){alert("Please answer every question before marking.");return;}
+  const subject = document.getElementById("quizSubject").value;
+  const attempt={id:Date.now(),date:new Date().toISOString(),subject:subject==="life"?"Life Sciences":"Agricultural Sciences",score,total:currentQuestions.length,percent:Math.round(score/currentQuestions.length*100)};
+  const progress=loadProgress(); progress.unshift(attempt); saveProgress(progress.slice(0,100));
+  lastResult=attempt;
+  const result=document.getElementById("quizResult");
+  result.innerHTML="";
+  const box=document.createElement("div");box.className="result";
+  const title=document.createElement("strong");title.textContent=`Your score: ${score}/${currentQuestions.length} (${attempt.percent}%)`;
+  const message=document.createElement("p");message.textContent=attempt.percent>=80?"Excellent work! Review any explanations below.":attempt.percent>=50?"Good effort. Review the explanations and try again.":"Keep practising. Read the notes and try the quiz again.";
+  box.append(title,message);
+  details.forEach(d=>{
+    const p=document.createElement("p");p.className=d.correct?"correct":"incorrect";
+    p.textContent=(d.correct?"✓ Correct — ":"✗ Review — ")+d.question+" "+d.explanation;
+    box.appendChild(p);
+  });
+  result.appendChild(box);renderDashboard();
+}
+function renderDashboard(){
+  const items=loadProgress();
+  const count=items.length;
+  const average=count?Math.round(items.reduce((sum,x)=>sum+x.percent,0)/count):null;
+  const best=count?items.reduce((a,b)=>b.percent>a.percent?b:a,items[0]):null;
+  document.getElementById("statQuizzes").textContent=count;
+  document.getElementById("statAverage").textContent=average===null?"—":average+"%";
+  document.getElementById("statBest").textContent=best?best.percent+"%":"—";
+  document.getElementById("dashAttempts").textContent=count;
+  document.getElementById("dashAverage").textContent=average===null?"—":average+"%";
+  document.getElementById("averageProgress").style.width=(average||0)+"%";
+  document.getElementById("dashBest").textContent=best?best.percent+"%":"—";
+  document.getElementById("bestSubject").textContent=best?best.subject:"Complete a quiz to begin.";
+  const wrap=document.getElementById("historyWrap");
+  if(!count){wrap.innerHTML='<div class="empty">No quiz attempts yet. Complete a quiz to see your progress here.</div>';return;}
+  const table=document.createElement("table");table.className="history";
+  table.innerHTML="<thead><tr><th>Date</th><th>Subject</th><th>Score</th><th>Result</th></tr></thead>";
+  const tbody=document.createElement("tbody");
+  items.slice(0,12).forEach(item=>{
+    const tr=document.createElement("tr");
+    const date=document.createElement("td");date.textContent=new Date(item.date).toLocaleDateString("en-ZA");
+    const subject=document.createElement("td");subject.textContent=item.subject;
+    const score=document.createElement("td");score.textContent=`${item.score}/${item.total}`;
+    const percent=document.createElement("td");percent.textContent=item.percent+"%";
+    tr.append(date,subject,score,percent);tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);wrap.innerHTML="";wrap.appendChild(table);
+}
+document.getElementById("quizForm").addEventListener("submit",markQuiz);
+document.getElementById("quizSubject").addEventListener("change",buildQuiz);
+document.getElementById("quizLength").addEventListener("change",buildQuiz);
+document.getElementById("noteSubject").addEventListener("change",updateNotes);
+document.getElementById("clearBtn").addEventListener("click",()=>{
+  if(confirm("Delete all saved quiz history from this browser? This cannot be undone.")){saveProgress([]);renderDashboard();document.getElementById("quizResult").innerHTML="";}
+});
+document.getElementById("exportBtn").addEventListener("click",()=>{
+  const data=JSON.stringify({exportedAt:new Date().toISOString(),attempts:loadProgress()},null,2);
+  const blob=new Blob([data],{type:"application/json"});
+  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="grade12-learning-progress.json";a.click();URL.revokeObjectURL(url);
+});
+document.getElementById("menuButton").addEventListener("click",()=>{
+  const nav=document.getElementById("mainNav");const open=nav.classList.toggle("open");
+  document.getElementById("menuButton").setAttribute("aria-expanded",String(open));
+});
+document.querySelectorAll("#mainNav a").forEach(a=>a.addEventListener("click",()=>{document.getElementById("mainNav").classList.remove("open");document.getElementById("menuButton").setAttribute("aria-expanded","false");}));
+document.getElementById("year").textContent=new Date().getFullYear();
+updateNotes();buildQuiz();renderDashboard();
+</script>
+</body>
+</html>
+'''
+
+readme = r'''# Grade 12 Learning Hub — Free GitHub Pages Starter
+
+This is a single-file, responsive educational website for South African Grade 12 learners. It includes introductory Life Sciences and Agricultural Sciences notes, simple diagrams, multiple-choice quizzes with automatic marking, a browser-local progress dashboard, and links to official DBE resources.
+
+## Files
+- `index.html` — the complete website. No build tools or external JavaScript libraries are required.
+
+## Publish it to your existing GitHub Pages site
+Your current site URL shown in your screenshot is `https://turbontn-ui.github.io/Grade-12-Learning/`.
+
+1. Sign in at https://github.com and open the repository `Grade-12-Learning`.
+2. Before replacing anything, you can optionally copy the old file contents into a backup note.
+3. Open `index.html`. If it exists, select the pencil icon (Edit). If it does not exist, choose **Add file → Create new file** and name it exactly `index.html`.
+4. Replace the entire file content with the content of the supplied `index.html`, then choose **Commit changes** and confirm.
+5. Open **Settings → Pages**. Confirm the publishing source is **Deploy from a branch**, branch `main`, folder `/(root)`. Save if you changed it.
+6. Wait a few minutes. Open `https://turbontn-ui.github.io/Grade-12-Learning/`.
+7. Hard-refresh with `Ctrl + F5` if you still see the old page.
+
+## Features and limitations
+- Quiz scores and history are stored in the browser using `localStorage`.
+- The same browser profile on the same device is needed to see that history. It is not a real learner account and does not sync between devices.
+- Clearing browser data can remove saved progress. The dashboard has an **Export progress** button to download a backup JSON file.
+- There is no login, server, private database, or account system in this version. No external service or payment is required for the site features included.
+- GitHub Pages is static hosting. Real authentication and cross-device score syncing would require a backend or a service such as Supabase or Firebase; free tiers have usage limits and terms can change.
+- The notes and questions are starter revision material, not a complete CAPS textbook and not official exam questions. Verify examinable content with current DBE CAPS documents and your teacher.
+- Past-paper links point to the Department of Basic Education. If a link moves, use the DBE site search for National Senior Certificate past examination papers.
+
+## Troubleshooting
+- **Page still shows the old content:** make sure you edited `index.html` in the correct repository and branch. Wait for deployment and use `Ctrl + F5`.
+- **404 page:** check the repository's **Settings → Pages** configuration and confirm the file is named `index.html` (all lowercase) in the publishing folder.
+- **Quiz scores do not save:** enable browser storage and avoid private/incognito mode. Some browser settings/extensions may block local storage.
+'''
+
+html_path = os.path.join(base, "index.html")
+readme_path = os.path.join(base, "README.md")
+with open(html_path, "w", encoding="utf-8") as f:
+    f.write(html)
+with open(readme_path, "w", encoding="utf-8") as f:
+    f.write(readme)
+
+zip_path = "/mnt/data/Grade12_Learning_Hub_Starter.zip"
+with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
+    z.write(html_path, "Grade12_Learning_Hub/index.html")
+    z.write(readme_path, "Grade12_Learning_Hub/README.md")
+
+print("Created website starter files:")
+print(html_path)
+print(readme_path)
+print(zip_path)
+
 
